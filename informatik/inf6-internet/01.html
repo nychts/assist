@@ -37,7 +37,7 @@
   <nav id="nav" aria-label="Andere Aufgaben dieser Stunde"></nav>
 </main>
 <script>
-const DATA = {"stunde":{"fach":"informatik","reihe":"inf6-internet","nr":1,"titel":"Das Forschungsnetzwerk"},"aufgabe":[{"id":"a2","titel":"Aufgabe 2: Wie kommt eine Nachricht durch das Netz?","tipps":["Denk an die Nachricht von Antarktis nach Estland. Wer hat sie abgeschickt, wer hat sie am Ende bekommen, und wer hat sie nur weitergegeben?","Schreib die Stationen in der Reihenfolge auf, in der die Nachricht sie erreicht hat. Dann gib jeder Station eine der drei Rollen: Sender, Zwischenstation, Empfänger.","Ein Anfang: **Der Sender** gibt die Nachricht an eine Station, die direkt mit ihm verbunden ist. Diese Station ist eine **Zwischenstation**, wenn sie nicht das Ziel ist. Sie …"]},{"id":"a3","titel":"Aufgabe 3: Nachbartabelle und Routen","tipps":["Schau dir die Stationskarten an. Auf jeder Karte steht, mit wem die Station direkt verbunden ist.","Wenn A ein Nachbar von B ist, dann ist auch B ein Nachbar von A. Prüf mit dieser Regel jede Zeile der Tabelle nach.","Bei einer Route gehst du Schritt für Schritt vor: Ist der erste Schritt zwischen zwei Nachbarn? Dann der zweite? Sobald ein Schritt zwei Stationen verbindet, die keine Nachbarn sind, ist die Route ungültig.","Kontrolle: In einer gültigen Route findest du jeden Schritt als Eintrag in deiner Nachbartabelle wieder."]}]};
+const DATA = {"stunde":{"fach":"informatik","reihe":"inf6-internet","nr":1,"einheit":"Doppelstunde 1 (Stunde 1–2)","titel":"Das Forschungsnetzwerk"},"aufgabe":[{"id":"a2","titel":"Aufgabe 2: Wie kommt eine Nachricht durch das Netz?","tipps":["Denk an die Nachricht von Antarktis nach Estland. Wer hat sie abgeschickt, wer hat sie am Ende bekommen, und wer hat sie nur weitergegeben?","Schreib die Stationen in der Reihenfolge auf, in der die Nachricht sie erreicht hat. Dann gib jeder Station eine der drei Rollen: Sender, Zwischenstation, Empfänger.","Ein Anfang: **Der Sender** gibt die Nachricht an eine Station, die direkt mit ihm verbunden ist. Diese Station ist eine **Zwischenstation**, wenn sie nicht das Ziel ist. Sie …"]},{"id":"a3","titel":"Aufgabe 3: Nachbartabelle und Routen","tipps":["Schau dir die Stationskarten an. Auf jeder Karte steht, mit wem die Station direkt verbunden ist.","Wenn A ein Nachbar von B ist, dann ist auch B ein Nachbar von A. Prüf mit dieser Regel jede Zeile der Tabelle nach.","Bei einer Route gehst du Schritt für Schritt vor: Ist der erste Schritt zwischen zwei Nachbarn? Dann der zweite? Sobald ein Schritt zwei Stationen verbindet, die keine Nachbarn sind, ist die Route ungültig.","Kontrolle: In einer gültigen Route findest du jeden Schritt als Eintrag in deiner Nachbartabelle wieder."]}]};
 const STUFEN = ["Denkanstoß", "Strategie", "Teillösung", "Kontrolle"];
 
 // Text sicher machen, dann **fett**, `code` und Zeilenumbrüche erlauben.
@@ -52,7 +52,7 @@ function zeige() {
   const s = DATA.stunde;
   const id = (location.hash || "").slice(1) || DATA.aufgabe[0].id;
   const a = DATA.aufgabe.find(x => x.id === id) || DATA.aufgabe[0];
-  document.getElementById("kopf").textContent = "Stunde " + s.nr + " · " + s.titel;
+  document.getElementById("kopf").textContent = (s.einheit || ("Stunde " + s.nr)) + " · " + s.titel;
   document.getElementById("titel").textContent = a.titel;
   document.title = "Tipps · " + a.titel;
 

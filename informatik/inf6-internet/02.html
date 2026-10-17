@@ -37,7 +37,7 @@
   <nav id="nav" aria-label="Andere Aufgaben dieser Stunde"></nav>
 </main>
 <script>
-const DATA = {"stunde":{"fach":"informatik","reihe":"inf6-internet","nr":2,"titel":"Netze als Graph und als Tabelle"},"aufgabe":[{"id":"a1","titel":"Aufgabe 1: Von der Tabelle zum Graphen","tipps":["Wie viele Stationen hat das Netz? Jede Station wird ein Knoten, also ein Kreis mit dem Buchstaben darin.","Zeichne zuerst alle Knoten, mit etwas Abstand. Dann gehst du die Tabelle Zeile für Zeile durch und ziehst für jeden Nachbarn eine Kante.","Beispiel: In der Zeile **B** steht „A, D“. Du ziehst eine Kante von B nach A und eine von B nach D. Steht A später noch einmal bei B, ist die Kante schon da.","Kontrolle: Zähle bei jedem Knoten die Kanten. Es müssen genauso viele sein, wie Nachbarn in seiner Zeile stehen."]},{"id":"a2","titel":"Aufgabe 2: Vom Graphen zur Tabelle","tipps":["Jeder Knoten bekommt eine eigene Zeile in der Tabelle. Welche Knoten berühren ihn über eine Kante?","Fahre mit dem Finger jede Kante entlang, die von einem Knoten ausgeht. Am anderen Ende steht ein Nachbar.","Achte auf Kanten, die sich kreuzen. An der Kreuzung ist kein Knoten. Die Kante geht weiter bis zum nächsten Kreis.","Kontrolle: Wenn A in der Zeile von E steht, muss E auch in der Zeile von A stehen."]}]};
+const DATA = {"stunde":{"fach":"informatik","reihe":"inf6-internet","nr":2,"einheit":"Doppelstunde 2 (Stunde 3–4)","titel":"Netze als Graph und als Tabelle"},"aufgabe":[{"id":"a1","titel":"Aufgabe 1: Von der Tabelle zum Graphen","tipps":["Wie viele Stationen hat das Netz? Jede Station wird ein Knoten, also ein Kreis mit dem Buchstaben darin.","Zeichne zuerst alle Knoten, mit etwas Abstand. Dann gehst du die Tabelle Zeile für Zeile durch und ziehst für jeden Nachbarn eine Kante.","Beispiel: In der Zeile **B** steht „A, D“. Du ziehst eine Kante von B nach A und eine von B nach D. Steht A später noch einmal bei B, ist die Kante schon da.","Kontrolle: Zähle bei jedem Knoten die Kanten. Es müssen genauso viele sein, wie Nachbarn in seiner Zeile stehen."]},{"id":"a2","titel":"Aufgabe 2: Vom Graphen zur Tabelle","tipps":["Jeder Knoten bekommt eine eigene Zeile in der Tabelle. Welche Knoten berühren ihn über eine Kante?","Fahre mit dem Finger jede Kante entlang, die von einem Knoten ausgeht. Am anderen Ende steht ein Nachbar.","Achte auf Kanten, die sich kreuzen. An der Kreuzung ist kein Knoten. Die Kante geht weiter bis zum nächsten Kreis.","Kontrolle: Wenn A in der Zeile von E steht, muss E auch in der Zeile von A stehen."]}]};
 const STUFEN = ["Denkanstoß", "Strategie", "Teillösung", "Kontrolle"];
 
 // Text sicher machen, dann **fett**, `code` und Zeilenumbrüche erlauben.
@@ -52,7 +52,7 @@ function zeige() {
   const s = DATA.stunde;
   const id = (location.hash || "").slice(1) || DATA.aufgabe[0].id;
   const a = DATA.aufgabe.find(x => x.id === id) || DATA.aufgabe[0];
-  document.getElementById("kopf").textContent = "Stunde " + s.nr + " · " + s.titel;
+  document.getElementById("kopf").textContent = (s.einheit || ("Stunde " + s.nr)) + " · " + s.titel;
   document.getElementById("titel").textContent = a.titel;
   document.title = "Tipps · " + a.titel;
 
