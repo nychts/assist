@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Tipps</title>
+<style>
+  :root { --gruen: #2a7a3b; --hell: #eef7f0; --text: #1d1d1d; --grau: #666; --rand: #cfe3d4; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--text);
+         background: #fafafa; line-height: 1.5; font-size: 18px; }
+  main { max-width: 680px; margin: 0 auto; padding: 16px; }
+  header p { margin: 0; color: var(--grau); font-size: 0.85em; }
+  h1 { font-size: 1.3em; margin: 4px 0 12px; }
+  .hinweis { background: #fff8e6; border-left: 4px solid #e0a800; padding: 8px 12px; border-radius: 4px; font-size: 0.9em; }
+  .stufe { background: #fff; border: 1px solid var(--rand); border-radius: 8px; margin: 12px 0; overflow: hidden; }
+  .stufe button { width: 100%; text-align: left; padding: 14px 16px; font: inherit; font-weight: 600;
+                  border: 0; background: var(--hell); color: var(--gruen); cursor: pointer; min-height: 48px; }
+  .stufe button:disabled { color: #999; background: #f1f1f1; cursor: not-allowed; }
+  .stufe .inhalt { padding: 4px 16px 14px; }
+  .stufe .inhalt[hidden] { display: none; }
+  code { background: #f0f0f0; padding: 1px 4px; border-radius: 3px; font-size: 0.92em; }
+  nav { margin-top: 28px; font-size: 0.9em; }
+  nav a { display: inline-block; margin: 4px 8px 4px 0; padding: 6px 10px; border: 1px solid var(--rand);
+          border-radius: 6px; color: var(--gruen); text-decoration: none; background: #fff; }
+  nav a[aria-current="true"] { background: var(--gruen); color: #fff; }
+  .leer { color: var(--grau); }
+</style>
+</head>
+<body>
+<main>
+  <header><p id="kopf"></p></header>
+  <h1 id="titel">Tipps</h1>
+  <p class="hinweis">Probiere es zuerst selbst. Decke die Tipps nacheinander auf und arbeite nach jedem Tipp weiter, bevor du den nächsten öffnest.</p>
+  <section id="stufen" aria-live="polite"></section>
+  <nav id="nav" aria-label="Andere Aufgaben dieser Stunde"></nav>
+</main>
+<script>
+const DATA = {"stunde":{"fach":"informatik","reihe":"formale-sprachen","nr":2,"einheit":"Doppelstunde (Stunde 2ÔÇô3)","titel":"Hack the Scanner"},"aufgabe":[{"id":"a1","titel":"Aufgabe 1: Der Parkett-Scanner","tipps":["Lies ein g├╝ltiges Ticket wie `C-12` langsam vor. Nach jedem Zeichen fragst du: Was wei├ƒ der Scanner jetzt, und was darf als N├ñchstes kommen? Jede Antwort ist ein Zustand.","Vier Fragen trennen die Zust├ñnde: Noch nichts gelesen? Buchstabe gelesen? Bindestrich gelesen? Eine oder zwei Ziffern gelesen? Die erste Ziffer darf keine 0 sein, die zweite schon.","In der ├£bergangstabelle steht in jeder Zeile ein Zustand, in jeder Spalte eine Zeichengruppe. In die Zelle schreibst du den Folgezustand. Passt kein Pfeil, tr├ñgst du den Fangzustand ein.","Kontrolle: Lauf `A-1`, `F-99` (Einlass) und `B-05`, `A-` (abgewiesen) in deiner Tabelle ab. Jede Zeile der Tabelle muss f├╝r jede Spalte genau einen Eintrag haben."]},{"id":"a2","titel":"Aufgabe 2: Hack-Protokoll","tipps":["Ein Scanner l├ñsst sich an den R├ñndern ├╝berlisten. Was passiert, wenn das Ticket zu fr├╝h aufh├Ârt, zu lang ist oder ein Zeichen an einer Stelle steht, an der es nicht erwartet wird?","Geh systematisch vor: ├ändere ein g├╝ltiges Ticket an genau einer Stelle. Buchstabe au├ƒerhalb von A bis F, Kleinbuchstabe, fehlender Bindestrich, f├╝hrende Null, drei Ziffern, ein Zeichen zu viel am Ende.","Ein Treffer z├ñhlt in zwei Richtungen: ung├╝ltiges Ticket mit Einlass oder g├╝ltiges Ticket, das abgewiesen wird. Notiere zu jedem Treffer den Zustand, in dem der Scanner am Ende steht."]},{"id":"ha","titel":"Hausaufgabe: Die Kaffeebar","tipps":["Leg die Spielfigur gedanklich auf den Startzustand und lies das Wort Zeichen f├╝r Zeichen. Schreib nach jedem Zeichen den Zustand auf.","F├╝r die Sprache: Was ├ñndert sich beim Lesen von k, was beim Lesen von s? Achte darauf, welcher Zustand Endzustand ist und was er ├╝ber die bisher gelesenen k verr├ñt.","Das leere Wort hat kein Zeichen. Der Automat bleibt also im Startzustand. Ist der ein Endzustand?"]}]};
+const STUFEN = ["Denkanstoß", "Strategie", "Teillösung", "Kontrolle"];
+
+// Text sicher machen, dann **fett**, `code` und Zeilenumbrüche erlauben.
+function formatiere(t) {
+  const esc = String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  return esc.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+            .replace(/`(.+?)`/g, "<code>$1</code>")
+            .replace(/\n\n/g, "</p><p>").replace(/\n/g, "<br>");
+}
+
+function zeige() {
+  const s = DATA.stunde;
+  const id = (location.hash || "").slice(1) || DATA.aufgabe[0].id;
+  const a = DATA.aufgabe.find(x => x.id === id) || DATA.aufgabe[0];
+  document.getElementById("kopf").textContent = (s.einheit || ("Stunde " + s.nr)) + " · " + s.titel;
+  document.getElementById("titel").textContent = a.titel;
+  document.title = "Tipps · " + a.titel;
+
+  const box = document.getElementById("stufen");
+  box.innerHTML = "";
+  const namen = a.stufen || STUFEN;
+  a.tipps.forEach((t, i) => {
+    const div = document.createElement("div");
+    div.className = "stufe";
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = "Tipp " + (i + 1) + ": " + (namen[i] || "") + " anzeigen";
+    btn.setAttribute("aria-expanded", "false");
+    btn.disabled = i > 0;
+    const inhalt = document.createElement("div");
+    inhalt.className = "inhalt";
+    inhalt.hidden = true;
+    inhalt.innerHTML = "<p>" + formatiere(t) + "</p>";
+    btn.addEventListener("click", () => {
+      inhalt.hidden = false;
+      btn.setAttribute("aria-expanded", "true");
+      btn.textContent = "Tipp " + (i + 1) + ": " + (namen[i] || "");
+      const next = box.querySelectorAll(".stufe button")[i + 1];
+      if (next) next.disabled = false;
+    });
+    div.append(btn, inhalt);
+    box.append(div);
+  });
+  if (a.tipps.length === 0) box.innerHTML = '<p class="leer">Zu dieser Aufgabe gibt es keine Tipps.</p>';
+
+  const nav = document.getElementById("nav");
+  nav.innerHTML = DATA.aufgabe.length > 1 ? "Andere Aufgaben: " : "";
+  if (DATA.aufgabe.length > 1) DATA.aufgabe.forEach(x => {
+    const l = document.createElement("a");
+    l.href = "#" + x.id;
+    l.textContent = x.titel.split(":")[0];
+    if (x.id === a.id) l.setAttribute("aria-current", "true");
+    nav.append(l);
+  });
+  window.scrollTo(0, 0);
+}
+window.addEventListener("hashchange", zeige);
+zeige();
+</script>
+</body>
+</html>
