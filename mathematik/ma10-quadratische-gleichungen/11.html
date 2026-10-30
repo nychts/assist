@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Tipps</title>
+<style>
+  :root { --gruen: #2a7a3b; --hell: #eef7f0; --text: #1d1d1d; --grau: #666; --rand: #cfe3d4; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--text);
+         background: #fafafa; line-height: 1.5; font-size: 18px; }
+  main { max-width: 680px; margin: 0 auto; padding: 16px; }
+  header p { margin: 0; color: var(--grau); font-size: 0.85em; }
+  h1 { font-size: 1.3em; margin: 4px 0 12px; }
+  .hinweis { background: #fff8e6; border-left: 4px solid #e0a800; padding: 8px 12px; border-radius: 4px; font-size: 0.9em; }
+  .stufe { background: #fff; border: 1px solid var(--rand); border-radius: 8px; margin: 12px 0; overflow: hidden; }
+  .stufe button { width: 100%; text-align: left; padding: 14px 16px; font: inherit; font-weight: 600;
+                  border: 0; background: var(--hell); color: var(--gruen); cursor: pointer; min-height: 48px; }
+  .stufe button:disabled { color: #999; background: #f1f1f1; cursor: not-allowed; }
+  .stufe .inhalt { padding: 4px 16px 14px; }
+  .stufe .inhalt[hidden] { display: none; }
+  code { background: #f0f0f0; padding: 1px 4px; border-radius: 3px; font-size: 0.92em; }
+  nav { margin-top: 28px; font-size: 0.9em; }
+  nav a { display: inline-block; margin: 4px 8px 4px 0; padding: 6px 10px; border: 1px solid var(--rand);
+          border-radius: 6px; color: var(--gruen); text-decoration: none; background: #fff; }
+  nav a[aria-current="true"] { background: var(--gruen); color: #fff; }
+  .leer { color: var(--grau); }
+</style>
+</head>
+<body>
+<main>
+  <header><p id="kopf"></p></header>
+  <h1 id="titel">Tipps</h1>
+  <p class="hinweis">Probiere es zuerst selbst. Decke die Tipps nacheinander auf und arbeite nach jedem Tipp weiter, bevor du den nächsten öffnest.</p>
+  <section id="stufen" aria-live="polite"></section>
+  <nav id="nav" aria-label="Andere Aufgaben dieser Stunde"></nav>
+</main>
+<script>
+const DATA = {"stunde":{"fach":"mathematik","reihe":"ma10-quadratische-gleichungen","nr":11,"titel":"Harriot bringt alles auf eine Seite"},"aufgabe":[{"id":"a1","titel":"Aufgabe 1: Lösungen im Produkt finden","tipps":["Ein Produkt ist null, wenn ein Faktor null ist. Welche Faktoren stehen in deiner Gleichung? Schreib für jeden Faktor eine eigene Gleichung auf.","Setze den ersten Faktor gleich 0 und löse wie eine einfache Gleichung. Dann der zweite Faktor. Jeder Faktor gibt eine Lösung. Bei b) ist das x selbst ein Faktor.","Beispiel mit einer anderen Gleichung: (x + 6)(x − 1) = 0. Erster Faktor: x + 6 = 0, also x = −6. Zweiter Faktor: x − 1 = 0, also x = 1. Lösungsmenge: L = {−6; 1}.","Bei c) steht vor dem x eine Zahl. Löse 2x + 18 = 0 in zwei Schritten: erst auf beiden Seiten 18 abziehen, dann durch 2 teilen. Für die Probe setzt du die Zahl in beide Klammern ein. Eine Klammer muss 0 ergeben."]},{"id":"a2","titel":"Aufgabe 2: Ausklammern und Faktoren null setzen","tipps":["Schau dir beide Summanden an. Was steckt in beiden drin? Bei x² + 3x steckt in x² und in 3x der Faktor x.","Klammere den gemeinsamen Faktor aus. Dann steht ein Produkt da, und rechts steht 0. Setze jeden Faktor gleich 0. Bei c) bringst du zuerst alles auf eine Seite, damit rechts 0 steht.","Beispiel mit einer anderen Gleichung: 3x² − 15x = 0. Ausklammern gibt 3x · (x − 5) = 0. Der Faktor 3x ist null für x = 0. Der Faktor x − 5 ist null für x = 5. Lösungsmenge: L = {0; 5}.","Bei c) teilst du nicht durch x, sonst geht eine Lösung verloren. Ziehe auf beiden Seiten 9x ab. Dann klammerst du x aus. Prüfe in der Probe auch x = 0: Steht links und rechts dasselbe?"]},{"id":"a3","titel":"Aufgabe 3: Zwei Wege, du wählst","tipps":["Schreib die Normalform x² + p x + q = 0 neben deine Gleichung. Welche Zahl fehlt bei dir? Das ist q.","Weg 1: Klammere aus und setze jeden Faktor gleich 0. Weg 2: Bring die Gleichung erst auf Normalform, lies p und q mit Vorzeichen ab und setze in die Formel ein.","Beispiel mit einer anderen Gleichung: x² + 8x = 0. Weg 1: x · (x + 8) = 0, also x = 0 oder x = −8. Weg 2: p = 8, q = 0, x = −4 ± √16 = −4 ± 4, also 0 oder −8. Beide Wege geben dieselben Lösungen.","Zähle die Zeilen deiner beiden Rechnungen und vergleiche die Zeiten. Schau auch, was in der Formel unter der Wurzel steht, wenn q = 0 ist."]}]};
+const STUFEN = ["Denkanstoß", "Strategie", "Teillösung", "Kontrolle"];
+
+// Text sicher machen, dann **fett**, `code` und Zeilenumbrüche erlauben.
+function formatiere(t) {
+  const esc = String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  return esc.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+            .replace(/`(.+?)`/g, "<code>$1</code>")
+            .replace(/\n\n/g, "</p><p>").replace(/\n/g, "<br>");
+}
+
+function zeige() {
+  const s = DATA.stunde;
+  const id = (location.hash || "").slice(1) || DATA.aufgabe[0].id;
+  const a = DATA.aufgabe.find(x => x.id === id) || DATA.aufgabe[0];
+  document.getElementById("kopf").textContent = (s.einheit || ("Stunde " + s.nr)) + " · " + s.titel;
+  document.getElementById("titel").textContent = a.titel;
+  document.title = "Tipps · " + a.titel;
+
+  const box = document.getElementById("stufen");
+  box.innerHTML = "";
+  const namen = a.stufen || STUFEN;
+  a.tipps.forEach((t, i) => {
+    const div = document.createElement("div");
+    div.className = "stufe";
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = "Tipp " + (i + 1) + ": " + (namen[i] || "") + " anzeigen";
+    btn.setAttribute("aria-expanded", "false");
+    btn.disabled = i > 0;
+    const inhalt = document.createElement("div");
+    inhalt.className = "inhalt";
+    inhalt.hidden = true;
+    inhalt.innerHTML = "<p>" + formatiere(t) + "</p>";
+    btn.addEventListener("click", () => {
+      inhalt.hidden = false;
+      btn.setAttribute("aria-expanded", "true");
+      btn.textContent = "Tipp " + (i + 1) + ": " + (namen[i] || "");
+      const next = box.querySelectorAll(".stufe button")[i + 1];
+      if (next) next.disabled = false;
+    });
+    div.append(btn, inhalt);
+    box.append(div);
+  });
+  if (a.tipps.length === 0) box.innerHTML = '<p class="leer">Zu dieser Aufgabe gibt es keine Tipps.</p>';
+
+  const nav = document.getElementById("nav");
+  nav.innerHTML = DATA.aufgabe.length > 1 ? "Andere Aufgaben: " : "";
+  if (DATA.aufgabe.length > 1) DATA.aufgabe.forEach(x => {
+    const l = document.createElement("a");
+    l.href = "#" + x.id;
+    l.textContent = x.titel.split(":")[0];
+    if (x.id === a.id) l.setAttribute("aria-current", "true");
+    nav.append(l);
+  });
+  window.scrollTo(0, 0);
+}
+window.addEventListener("hashchange", zeige);
+zeige();
+</script>
+</body>
+</html>
