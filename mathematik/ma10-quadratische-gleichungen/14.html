@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Tipps</title>
+<style>
+  :root { --gruen: #2a7a3b; --hell: #eef7f0; --text: #1d1d1d; --grau: #666; --rand: #cfe3d4; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--text);
+         background: #fafafa; line-height: 1.5; font-size: 18px; }
+  main { max-width: 680px; margin: 0 auto; padding: 16px; }
+  header p { margin: 0; color: var(--grau); font-size: 0.85em; }
+  h1 { font-size: 1.3em; margin: 4px 0 12px; }
+  .hinweis { background: #fff8e6; border-left: 4px solid #e0a800; padding: 8px 12px; border-radius: 4px; font-size: 0.9em; }
+  .stufe { background: #fff; border: 1px solid var(--rand); border-radius: 8px; margin: 12px 0; overflow: hidden; }
+  .stufe button { width: 100%; text-align: left; padding: 14px 16px; font: inherit; font-weight: 600;
+                  border: 0; background: var(--hell); color: var(--gruen); cursor: pointer; min-height: 48px; }
+  .stufe button:disabled { color: #999; background: #f1f1f1; cursor: not-allowed; }
+  .stufe .inhalt { padding: 4px 16px 14px; }
+  .stufe .inhalt[hidden] { display: none; }
+  code { background: #f0f0f0; padding: 1px 4px; border-radius: 3px; font-size: 0.92em; }
+  nav { margin-top: 28px; font-size: 0.9em; }
+  nav a { display: inline-block; margin: 4px 8px 4px 0; padding: 6px 10px; border: 1px solid var(--rand);
+          border-radius: 6px; color: var(--gruen); text-decoration: none; background: #fff; }
+  nav a[aria-current="true"] { background: var(--gruen); color: #fff; }
+  .leer { color: var(--grau); }
+</style>
+</head>
+<body>
+<main>
+  <header><p id="kopf"></p></header>
+  <h1 id="titel">Tipps</h1>
+  <p class="hinweis">Probiere es zuerst selbst. Decke die Tipps nacheinander auf und arbeite nach jedem Tipp weiter, bevor du den nächsten öffnest.</p>
+  <section id="stufen" aria-live="polite"></section>
+  <nav id="nav" aria-label="Andere Aufgaben dieser Stunde"></nav>
+</main>
+<script>
+const DATA = {"stunde":{"fach":"mathematik","reihe":"ma10-quadratische-gleichungen","nr":14,"titel":"Wer hätte welches Werkzeug genommen?"},"aufgabe":[{"id":"a1","titel":"Aufgabe 1: Das Werkzeug wählen","tipps":["Schau dir die Gleichung an, bevor du rechnest. Steht links ein Produkt und rechts 0? Fehlt das x oder die Zahl ohne x? Steht eine Klammer im Quadrat allein da? Steht vor x² eine Zahl?","Gehe die Werkzeuge der Reihe nach durch und frag bei jedem: Passt es auf die Gestalt dieser Gleichung? Die pq-Formel kommt zuletzt, weil sie auf jede Gleichung in Normalform passt und meist die meisten Zeilen braucht.","Beispiel mit einer anderen Gleichung: x² − 9x = 0. Hier fehlt die Zahl ohne x. Ich wähle Ausklammern, weil in beiden Summanden ein x steckt. Der Halbsatz heißt: „Ich wähle Ausklammern, weil die Zahl ohne x fehlt.“","Nennt dein Halbsatz ein Merkmal der Gleichung, zum Beispiel ein Produkt, eine fehlende Zahl oder eine Klammer? Ein Halbsatz wie „weil ich das kann“ nennt kein Merkmal."]},{"id":"a2","titel":"Aufgabe 2: Zwei Karten allein lösen","tipps":["Brauchst du Vorarbeit, bevor das Werkzeug passt? Steht rechts schon 0? Steht vor x² eine Zahl außer 1?","Bring zuerst alles auf die Seite, die dein Werkzeug braucht, und teile durch die Zahl vor x², wenn eine dasteht. Wende dann das Werkzeug aus Aufgabe 1 an. Bei einer Gleichung wie x² = 4x teilst du nie durch x.","Beispiel mit einer anderen Gleichung: 3x² = 27. Durch 3 teilen: x² = 9. Wurzel ziehen: x = 3 oder x = −3. Probe: 3 · 3² = 27 ✓ und 3 · (−3)² = 27 ✓.","Setze beide Lösungen in die Ausgangsgleichung ein, nicht in eine umgeformte. Bei einer Lösung mit Wurzel rechnest du mit dem gerundeten Wert, links und rechts stimmen dann ungefähr überein. Ist D negativ, schreibst du L = { } und die Probe entfällt."]},{"id":"a3","titel":"Aufgabe 3: Der klarste Weg","tipps":["Vergleiche die Wege zu derselben Karte. Wie viele Zeilen braucht jeder? Wo kann man sich am leichtesten verrechnen, zum Beispiel beim Vorzeichen von p?","Nenne im Satz zwei Wege und sag, was beim klareren Weg wegfällt: eine Umformung, eine Wurzel, mehrere Zeilen. Das Satzmuster heißt: „Im Gegensatz zu … erhält man hier …, da …“","Beispiel zu x² − 9x = 0: „Im Gegensatz zur pq-Formel erhält man beim Ausklammern sofort zwei einfache Gleichungen, da in beiden Summanden ein x steckt.“"]}]};
+const STUFEN = ["Denkanstoß", "Strategie", "Teillösung", "Kontrolle"];
+
+// Text sicher machen, dann **fett**, `code` und Zeilenumbrüche erlauben.
+function formatiere(t) {
+  const esc = String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  return esc.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+            .replace(/`(.+?)`/g, "<code>$1</code>")
+            .replace(/\n\n/g, "</p><p>").replace(/\n/g, "<br>");
+}
+
+function zeige() {
+  const s = DATA.stunde;
+  const id = (location.hash || "").slice(1) || DATA.aufgabe[0].id;
+  const a = DATA.aufgabe.find(x => x.id === id) || DATA.aufgabe[0];
+  document.getElementById("kopf").textContent = (s.einheit || ("Stunde " + s.nr)) + " · " + s.titel;
+  document.getElementById("titel").textContent = a.titel;
+  document.title = "Tipps · " + a.titel;
+
+  const box = document.getElementById("stufen");
+  box.innerHTML = "";
+  const namen = a.stufen || STUFEN;
+  a.tipps.forEach((t, i) => {
+    const div = document.createElement("div");
+    div.className = "stufe";
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = "Tipp " + (i + 1) + ": " + (namen[i] || "") + " anzeigen";
+    btn.setAttribute("aria-expanded", "false");
+    btn.disabled = i > 0;
+    const inhalt = document.createElement("div");
+    inhalt.className = "inhalt";
+    inhalt.hidden = true;
+    inhalt.innerHTML = "<p>" + formatiere(t) + "</p>";
+    btn.addEventListener("click", () => {
+      inhalt.hidden = false;
+      btn.setAttribute("aria-expanded", "true");
+      btn.textContent = "Tipp " + (i + 1) + ": " + (namen[i] || "");
+      const next = box.querySelectorAll(".stufe button")[i + 1];
+      if (next) next.disabled = false;
+    });
+    div.append(btn, inhalt);
+    box.append(div);
+  });
+  if (a.tipps.length === 0) box.innerHTML = '<p class="leer">Zu dieser Aufgabe gibt es keine Tipps.</p>';
+
+  const nav = document.getElementById("nav");
+  nav.innerHTML = DATA.aufgabe.length > 1 ? "Andere Aufgaben: " : "";
+  if (DATA.aufgabe.length > 1) DATA.aufgabe.forEach(x => {
+    const l = document.createElement("a");
+    l.href = "#" + x.id;
+    l.textContent = x.titel.split(":")[0];
+    if (x.id === a.id) l.setAttribute("aria-current", "true");
+    nav.append(l);
+  });
+  window.scrollTo(0, 0);
+}
+window.addEventListener("hashchange", zeige);
+zeige();
+</script>
+</body>
+</html>
