@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Zahlenraten</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <h1>Zahlenraten</h1>
+    <p>Ich denke mir eine Zahl zwischen 1 und 100. Du hast 7 Versuche.</p>
+    <input id="tipp" type="number" min="1" max="100" placeholder="Dein Tipp">
+    <button id="knopf" onclick="raten()">Raten</button>
+    <p id="meldung">Viel Glück!</p>
+    <p>Versuche: <span id="zaehler">0</span> von 7</p>
+    <p class="klein">Neues Spiel: Seite neu laden (F5).</p>
+  </main>
+  <script src="spiel.js"></script>
+</body>
+</html>
