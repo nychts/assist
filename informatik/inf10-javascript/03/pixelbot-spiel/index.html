@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Schere, Stein, Papier</title>
+</head>
+<body>
+  <h1>Schere, Stein, Papier</h1>
+  <button onclick="spielen('Schere')">Schere</button>
+  <button onclick="spielen('Stein')">Stein</button>
+  <button onclick="spielen('Papier')">Papier</button>
+  <p id="computer">Computer: ?</p>
+  <p id="ergebnis">Wähle!</p>
+  <p>Punkte: <span id="punkte">0</span></p>
+
+  <script>
+    let punkte = 0;
+
+    function computerWahl() {
+      let zahl = Math.floor(Math.random() * 2);
+      if (zahl === 0) {
+        return "Schere";
+      } else if (zahl === 1) {
+        return "Stein";
+      } else {
+        return "Papier";
+      }
+    }
+
+    function ermittleSieger(spieler, computer) {
+      if (spieler === "Schere" && computer === "Papier") {
+        return "Gewonnen";
+      } else if (spieler === "Stein" && computer === "Papier") {
+        return "Gewonnen";
+      } else if (spieler === "Papier" && computer === "Stein") {
+        return "Gewonnen";
+      } else {
+        return "Verloren";
+      }
+    }
+
+    function spielen(spieler) {
+      let computer = computerWahl();
+      let ergebnis = ermittleSieger(spieler, computer);
+      if (ergebnis === "Gewonnen") {
+        punkte = punkte + 1;
+      }
+      document.getElementById("computer").textContent = "Computer: " + computer;
+      document.getElementById("ergebnis").textContent = ergebnis;
+      document.getElementById("punkte").textContent = punkte;
+    }
+  </script>
+</body>
+</html>
